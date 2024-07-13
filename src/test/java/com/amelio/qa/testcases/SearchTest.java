@@ -8,7 +8,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.amelio.qa.base.Base;
-
+//new commnet added by arti
 public class SearchTest extends Base {
 	
 	public SearchTest() {
