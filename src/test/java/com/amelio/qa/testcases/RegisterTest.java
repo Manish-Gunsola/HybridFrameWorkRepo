@@ -1,19 +1,16 @@
 package com.amelio.qa.testcases;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.amelio.qa.base.Base;
+import com.amelio.qa.pages.AccountPage;
 import com.amelio.qa.pages.HomePage;
+import com.amelio.qa.pages.RegisterPage;
 import com.amelio.qa.utils.Utilities;
 
 public class RegisterTest extends Base {
@@ -39,56 +36,63 @@ public class RegisterTest extends Base {
 		driver.quit();
 	}
 	
-	@Test
-	public void verifyRegistratingAccountWithMandotoryFields() {
-		driver.findElement(By.id("input-firstname")).sendKeys(dataProp.getProperty("firstName"));
-		driver.findElement(By.id("input-lastname")).sendKeys(dataProp.getProperty("lastName"));
-		driver.findElement(By.id("input-email")).sendKeys(Utilities.generateEmailWithTimeStamp());
-		driver.findElement(By.id("input-telephone")).sendKeys(dataProp.getProperty("telephoneNumber"));
-		driver.findElement(By.id("input-password")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.id("input-confirm")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.xpath("//input[@type=\"checkbox\" and @value=\"1\"]")).click();
-		driver.findElement(By.xpath("//input[@type=\"submit\"]")).click();
+	@Test(priority=1)
+	public void verifyRegistratingAccountWithMandotoryFields() throws InterruptedException {
+		RegisterPage rp= new RegisterPage(driver);
+		rp.enterFirstName(dataProp.getProperty("firstName"));
+		rp.enterLastName(dataProp.getProperty("lastName"));
+		rp.enterEmailAddress(Utilities.generateEmailWithTimeStamp());
+		rp.enterTelephone(dataProp.getProperty("telephoneNumber"));
+		rp.enterPassword(prop.getProperty("validPass"));
+		rp.enterConfirmPassword(prop.getProperty("validPass"));
+		rp.selectPrivacypolicyButton();
+		rp.selectSubmitButton();
 		
-		String actualConfirmedAccountCreationMessage=driver.findElement(By.xpath("//div[@id=\"content\"]//h1")).getText();
+		AccountPage ap= new AccountPage(driver);
+		String actualConfirmedAccountCreationMessage=ap.getTextOfaccountSuccessPage();
 		Assert.assertEquals(actualConfirmedAccountCreationMessage, dataProp.getProperty("accountSuccessfullyCreatedHeading"),"account not created");
 	}
 	
 	@Test(priority=2)
 	public void verifyRegisteringAccountByProvidingAllFields() {
-		driver.findElement(By.id("input-firstname")).sendKeys(dataProp.getProperty("firstName"));
-		driver.findElement(By.id("input-lastname")).sendKeys(dataProp.getProperty("lastName"));
-		driver.findElement(By.id("input-email")).sendKeys(Utilities.generateEmailWithTimeStamp());
-		driver.findElement(By.id("input-telephone")).sendKeys(dataProp.getProperty("telephoneNumber"));
-		driver.findElement(By.id("input-password")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.id("input-confirm")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.xpath("//input[@name=\"newsletter\" and @value=\"1\"]")).click();
-		driver.findElement(By.xpath("//input[@type=\"checkbox\" and @value=\"1\"]")).click();
-		driver.findElement(By.xpath("//input[@type=\"submit\"]")).click();
+		RegisterPage rp= new RegisterPage(driver);
+		rp.enterFirstName(dataProp.getProperty("firstName"));
+		rp.enterLastName(dataProp.getProperty("lastName"));
+		rp.enterEmailAddress(Utilities.generateEmailWithTimeStamp());
+		rp.enterTelephone(dataProp.getProperty("telephoneNumber"));
+		rp.enterPassword(prop.getProperty("validPass"));
+		rp.enterConfirmPassword(prop.getProperty("validPass"));
+		rp.selectyesForNewsLetter();
+		rp.selectPrivacypolicyButton();
+		rp.selectSubmitButton();
 		
-		String actualConfirmedAccountCreationMessage=driver.findElement(By.xpath("//div[@id=\"content\"]//h1")).getText();
+		AccountPage ap= new AccountPage(driver);
+		String actualConfirmedAccountCreationMessage=ap.getTextOfaccountSuccessPage();
 		Assert.assertEquals(actualConfirmedAccountCreationMessage, dataProp.getProperty("accountSuccessfullyCreatedHeading"),"account not created");
 	}
 	@Test(priority=3)
-	public void verifyRegisterAccountWithExistingEmailAddress() {
-		driver.findElement(By.id("input-firstname")).sendKeys(dataProp.getProperty("firstName"));
-		driver.findElement(By.id("input-lastname")).sendKeys(dataProp.getProperty("lastName"));
-		driver.findElement(By.id("input-email")).sendKeys(prop.getProperty("validEmail"));
-		driver.findElement(By.id("input-telephone")).sendKeys(dataProp.getProperty("telephoneNumber"));
-		driver.findElement(By.id("input-password")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.id("input-confirm")).sendKeys(prop.getProperty("validPass"));
-		driver.findElement(By.xpath("//input[@name=\"newsletter\" and @value=\"1\"]")).click();
-		driver.findElement(By.xpath("//input[@type=\"checkbox\" and @value=\"1\"]")).click();
-		driver.findElement(By.xpath("//input[@type=\"submit\"]")).click();
+	public void verifyRegisterAccountWithExistingEmailAddress() throws InterruptedException {
+		RegisterPage rp= new RegisterPage(driver);
+		rp.enterFirstName(dataProp.getProperty("firstName"));
+		rp.enterLastName(dataProp.getProperty("lastName"));
+		rp.enterEmailAddress(prop.getProperty("validEmail"));
+		rp.enterTelephone(dataProp.getProperty("telephoneNumber"));
+		rp.enterPassword(prop.getProperty("validPass"));
+		rp.enterConfirmPassword(prop.getProperty("validPass"));
+		rp.selectPrivacypolicyButton();
+		rp.selectSubmitButton();
 		
-		String warningMessageForAlreadyExistMail=driver.findElement(By.xpath("//div[@class=\"alert alert-danger alert-dismissible\"]")).getText();
+		String warningMessageForAlreadyExistMail=rp.getDuplicateEmailText();
 		System.out.println(warningMessageForAlreadyExistMail);
 		Assert.assertEquals(warningMessageForAlreadyExistMail, dataProp.getProperty("duplicateEmailWarning"));
 	}
 	
 	@Test(priority=4)
 	public void verifyRegisterWithoutAnyDetails() {
-		driver.findElement(By.xpath("//input[@type=\"submit\"]")).click();
+		RegisterPage rp= new RegisterPage(driver);
+		rp.selectSubmitButton();
+		
+		
 		
 		String privacyPolicyWarningMessage=driver.findElement(By.xpath("//div[@class=\"alert alert-danger alert-dismissible\"]")).getText();
 		Assert.assertTrue(privacyPolicyWarningMessage.contains(dataProp.getProperty("privacyPolicyWarning")));

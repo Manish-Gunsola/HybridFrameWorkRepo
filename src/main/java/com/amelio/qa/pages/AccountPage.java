@@ -8,6 +8,9 @@ import org.openqa.selenium.support.PageFactory;
 public class AccountPage {
 	WebDriver driver;
 	
+	@FindBy(xpath="//div[@id='content']/h1")
+	private WebElement accountScucessPageHeading;
+	
 	@FindBy(xpath="//a[text()=\"Edit your account information\"]")
 	private WebElement editYourAccountInfoLink;
 	
@@ -20,6 +23,13 @@ public class AccountPage {
 		boolean displayStatus=editYourAccountInfoLink.isDisplayed();
 		return displayStatus;
 	}
+	
+	public String getTextOfaccountSuccessPage() {
+		return accountScucessPageHeading.getText();
+		
+	}
+	
+	
 
 
 }

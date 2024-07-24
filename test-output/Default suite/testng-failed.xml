@@ -5,7 +5,7 @@
     <classes>
       <class name="com.amelio.qa.testcases.RegisterTest">
         <methods>
-          <include name="verifyRegisterWithoutAnyDetails"/>
+          <include name="verifyRegistratingAccountWithMandotoryFields"/>
           <include name="tearDown"/>
           <include name="setup"/>
         </methods>
